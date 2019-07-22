@@ -1,0 +1,4 @@
+owner: ucipass
+repo: gssh
+provider: github
+updaterCacheDirName: electron-vue-updater
