@@ -68,6 +68,13 @@ export default {
       console.log(message)
       this.connected = false
     })
+    this.$root.$on('sendCommands', (msg) => {
+      console.log("sendCommands", msg)
+      // this.term.write(msg)
+      if(this.connected) {
+        ipcRenderer.send(this.terminalId, msg  )
+      }  
+    })
     this.connect()
   },
   beforeDestroy(){

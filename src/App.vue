@@ -22,7 +22,7 @@
       />
     </b-row>
     <b-row class="flex-auto m-0">
-        <b-textarea @dblclick="testdbl($event)" rows=5 class="flex-auto"></b-textarea> 
+        <b-textarea v-model="commands"  @dblclick="testdbl($event)" rows=5 class="flex-auto"></b-textarea> 
     </b-row>
     <b-modal id="LoginWindow" class="text-center" title="SSH Login">
         <b-container>
@@ -58,6 +58,7 @@ export default {
   },
   data() {
     return {
+      commands: "",
       terminals: [ ],
       host: "",
       username: "",
@@ -95,6 +96,8 @@ export default {
     sendCommands: function () {
       let activeTerminal = this.terminals.filter((terminal) => { return terminal.active })
       console.log( activeTerminal.length ? activeTerminal[0].terminalId : "No active terminal")
+      // console.log("sending",this.commands)
+      this.$root.$emit('sendCommands', this.commands )
     },
     activate: function(terminalId){
       console.log(terminalId)
