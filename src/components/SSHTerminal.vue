@@ -53,15 +53,18 @@ export default {
     })
     // Acknowledgement that SSH Session os Open
     ipcRenderer.on(this.terminalId+'OpenAck', (event,message)=>{
+      this.term.write(message);
       console.log(message)
       this.connected = true
     }) 
     // Received SSH Client Close
     ipcRenderer.on(this.terminalId+'Close', (event,message)=>{
+      this.term.write(message);
       console.log(message)
       this.connected = false
     }) 
     ipcRenderer.on(this.terminalId+'Error', (event,message)=>{
+      this.term.write(message);
       console.log(message)
       this.connected = false
     })

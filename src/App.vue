@@ -1,15 +1,16 @@
 <template>
-  <b-container fluid id="app" class="p-0 m-0 text-center">
-      <div class='text-left'>
-        <b-button size="sm" @click='$bvModal.show("LoginWindow")'>+</b-button>
-        <b-button size="sm" @click="disconnect()">x</b-button>
-        <b-button-group         
-          v-for="button in terminals"
-          :key="button.terminalId+(new Date()).toString()">
-          <b-button size="sm" @click="activate(button.terminalId)">{{button.host}}</b-button>
-          <b-button size="sm" @click="console.log('About to close')">X</b-button>
-        </b-button-group>
-      </div>
+  <div fluid id="app" class="disp-flex-vertical m-0">
+    <b-row class="flex-fix text-left m-0">
+      <b-button size="sm" @click='$bvModal.show("LoginWindow")'>Connect</b-button>
+      <b-button size="sm" @click='sendCommands()'>SendCommands</b-button>
+      <b-button-group         
+        v-for="button in terminals"
+        :key="button.terminalId+(new Date()).toString()">
+        <b-button size="sm" @click="activate(button.terminalId)">{{button.host}}</b-button>
+        <b-button size="sm" @click="disconnect(button.terminalId)">X</b-button>
+      </b-button-group>
+    </b-row>
+    <b-row class="flex-fix m-0">
       <SSHTerminal
         v-for="terminal in terminals"
         v-show='terminal.active'
@@ -19,6 +20,10 @@
         :username = 'terminal.username'
         :password = 'terminal.password'
       />
+    </b-row>
+    <b-row class="flex-auto m-0">
+        <b-textarea @dblclick="testdbl($event)" rows=5 class="flex-auto"></b-textarea> 
+    </b-row>
     <b-modal id="LoginWindow" class="text-center" title="SSH Login">
         <b-container>
           <b-row align-h="center">
@@ -40,7 +45,7 @@
           <b-button variant="primary" size="sm" class="float-right" @click="login">Login</b-button>
         </div>
     </b-modal>  
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -62,6 +67,9 @@ export default {
     }
   },
   methods: {
+    testdbl: function(event){
+      console.log("selectionStart",event.target.selectionStart,"selectionEnd",event.target.selectionEnd)
+    },
     login: function () {
       console.log(this.host,this.username,this.password)
       let param = {
@@ -76,8 +84,17 @@ export default {
       this.terminals.push(param)
       this.$bvModal.hide("LoginWindow")
     },
-    disconnect: function () {
-        this.terminals.pop()
+    disconnect: function (terminalId) {
+        console.log(terminalId)
+        // delete closed terminal windows from active sessions
+        this.terminals = this.terminals.filter((terminal) => { return terminal.terminalId != terminalId  })
+        // make sure that at least one terminal is active
+        let activeTerminal = this.terminals.filter((terminal) => { return terminal.active })
+        if ( !activeTerminal.length && this.terminals.length ) this.terminals[0].active = true
+    },
+    sendCommands: function () {
+      let activeTerminal = this.terminals.filter((terminal) => { return terminal.active })
+      console.log( activeTerminal.length ? activeTerminal[0].terminalId : "No active terminal")
     },
     activate: function(terminalId){
       console.log(terminalId)
@@ -91,7 +108,46 @@ export default {
 </script>
 
 <style>
+html,
 body {
   background-color: black;
+  height: 100%;
+  width: 100%;
+  margin: 0
+}
+
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  height: 100%;
+  width: 100%;
+}
+
+.disp-flex-vertical {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+.disp-flex-horizontal {
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
+
+.flex-fix {
+  /* border: 1px dotted grey; */
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+}
+
+.flex-auto {
+  /* border: 1px dotted grey; */
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
 }
 </style>
