@@ -1,0 +1,8 @@
+version: 0.1.0
+files:
+  - url: electron-vue-setup-0.1.0.exe
+    sha512: bDHRwPUPhfn8K8Zmam712kWLVV9c7INL4QgFOQOGnlFKWfvpAjdEOIR0yk7XKKZHwVR8MJUep2oHxt0MWRXmLg==
+    size: 42590347
+path: electron-vue-setup-0.1.0.exe
+sha512: bDHRwPUPhfn8K8Zmam712kWLVV9c7INL4QgFOQOGnlFKWfvpAjdEOIR0yk7XKKZHwVR8MJUep2oHxt0MWRXmLg==
+releaseDate: '2019-07-26T01:56:49.955Z'
