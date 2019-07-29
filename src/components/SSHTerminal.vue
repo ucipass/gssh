@@ -14,7 +14,9 @@ import { ipcRenderer } from 'electron'
 import 'xterm/dist/xterm.css'
 import { Terminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';
+import { setTimeout } from 'timers';
 Terminal.applyAddon(fit);
+const waitSec = require('util').promisify(setTimeout)
  
 
 export default {
@@ -74,6 +76,15 @@ export default {
       if(this.connected) {
         ipcRenderer.send(this.terminalId, msg  )
       }  
+    })
+    this.$root.$on('sendJob', async (job) => {
+      console.log("sendJob Received:", job)
+      for (let cmd of job.commands) {
+        ipcRenderer.send(this.terminalId, cmd.send+"\n"  )
+        console.log("sent",cmd.send,"waiting",(new Date()).toString())
+        await waitSec(2000)        
+      }
+
     })
     this.connect()
   },

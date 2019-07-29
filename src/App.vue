@@ -2,7 +2,17 @@
   <div fluid id="app" class="disp-flex-vertical m-0">
     <b-row class="flex-fix text-left m-0">
       <b-button size="sm" @click='$bvModal.show("LoginWindow")'>Connect</b-button>
-      <b-button size="sm" @click='sendCommands()'>SendCommands</b-button>
+      <b-button size="sm" @click='sendCommands()'>SendCommands</b-button>      
+      <b-button size="sm" @click='sendJob()'>SendJob</b-button>      
+    </b-row>
+    <b-row v-if='true' class="flex-auto m-0">
+        <b-textarea v-model="commands"  @dblclick="testdbl($event)" rows=5 class="flex-auto"></b-textarea> 
+    </b-row>
+    <div v-if='false' class="flex-auto" style="overflow-y: scroll;" >
+      <b-table class="flex-auto" dark small striped hover :items="items"></b-table>      
+    </div>
+
+    <b-row class="flex-fix m-0">
       <b-button-group         
         v-for="button in terminals"
         :key="button.terminalId+(new Date()).toString()">
@@ -20,9 +30,6 @@
         :username = 'terminal.username'
         :password = 'terminal.password'
       />
-    </b-row>
-    <b-row class="flex-auto m-0">
-        <b-textarea v-model="commands"  @dblclick="testdbl($event)" rows=5 class="flex-auto"></b-textarea> 
     </b-row>
     <b-modal id="LoginWindow" class="text-center" title="SSH Login">
         <b-container>
@@ -64,7 +71,34 @@ export default {
       username: "",
       password: "",
       loginError: "",
-      test: true
+      test: true,
+      items: [
+        { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
+        { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
+        { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
+        { age: 38, first_name: 'Jami', last_name: 'Carney' }
+      ],
+      job:{
+        default:{
+          maxWait: 60,
+          minWait: 0,
+          abortOnFailure: true
+        },
+        commands: [
+          { 
+            send: "ping 8.8.8.8",
+            expect: "#",
+            maxWait: 10,
+            minWait: 0,
+          },
+          { 
+            send: "ping 4.2.2.2",
+            expect: "#",
+            maxWait: 10,
+            minWait: 0,
+          }          
+        ]
+      }
     }
   },
   methods: {
@@ -98,6 +132,12 @@ export default {
       console.log( activeTerminal.length ? activeTerminal[0].terminalId : "No active terminal")
       // console.log("sending",this.commands)
       this.$root.$emit('sendCommands', this.commands )
+    },
+    sendJob: function () {
+      let activeTerminal = this.terminals.filter((terminal) => { return terminal.active })
+      console.log( activeTerminal.length ? activeTerminal[0].terminalId : "No active terminal")
+      // console.log("sending",this.commands)
+      this.$root.$emit('sendJob', this.job )
     },
     activate: function(terminalId){
       console.log(terminalId)

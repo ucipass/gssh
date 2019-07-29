@@ -121,9 +121,11 @@ function SSHClient(host,username,password,terminalId){
   })
   .on('close', function() {
     win.webContents.send(terminalId+"Close", '\r\n*** SSH CONNECTION CLOSED ***\r\n');
+    conn.end();
   })
   .on('error', function(err) {
     win.webContents.send(terminalId+"Error", '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
+    conn.end();
   })
   .on('keyboard-interactive',
   function(name, instructions, instructionsLang, prompts, finish) {
